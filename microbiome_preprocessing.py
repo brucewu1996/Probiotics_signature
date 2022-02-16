@@ -176,4 +176,6 @@ def binary_anomaly_detection_scatter_plot(threshold,score,label,class_label,path
         ax.yaxis.grid()
         plt.savefig(path,dpi = 300)
         plt.show()
-
+def format_mpa_report(mpa_report) :
+    
+    return abundance_df
