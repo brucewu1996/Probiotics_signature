@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import re
+import glob
+import os
 from itertools import compress
 import matplotlib.pyplot as plt
 
@@ -176,6 +178,33 @@ def binary_anomaly_detection_scatter_plot(threshold,score,label,class_label,path
         ax.yaxis.grid()
         plt.savefig(path,dpi = 300)
         plt.show()
-def format_mpa_report(mpa_report) :
-    
-    return abundance_df
+
+def merge_emu_output(path) :
+    '''
+    path : folder path of emu output
+    sample format : sample + sample_barcode + .fastq
+    emu output report format : sample name +'rel-abundance.tsv'
+    '''
+    #path = '/home/bruce1996/data/Yi-Fung-Chuang/within_individual/emu_output/'
+    file_list = glob.glob(path +"*tsv")
+    file_list.sort()
+    for idx,file in enumerate(file_list) :
+        _,filename = os.path.split(file)
+        if re.search('threshold',filename) != None :
+            continue
+        sample_name = filename.split('_')[1] 
+        df = pd.read_csv(file,sep = '\t')
+        #only extract abundance & species columns
+        df = df.iloc[:,0:2]
+        df.columns = [sample_name,'species']
+        if idx == 0 :
+            merge_df = df
+        else :
+            merge_df = pd.merge(merge_df,df,how = 'outer',on = 'species')
+    merge_df = merge_df.fillna(0)
+    idx = [1,0] + [x for x in range(2,merge_df.shape[1])]
+    merge_df = merge_df.iloc[:,idx]
+    #merge_df.index = merge_df['species']
+
+    return merge_df
+
