@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import argparse
 import os
-from sklearn.decomposition import NMF
+from sklearn.decomposition import NMF# type: ignore
 
 def finger_print_proportion(x,w,h):
     n_finger_print = w.shape[1]
@@ -16,7 +16,7 @@ def finger_print_proportion(x,w,h):
             pass
         else :
             for j in range(n_finger_print) :
-                ab = sum(np.dot(w[i,j],h[j,:]))
+                ab = sum(np.dot(w[i,j],h[j,:]))# type: ignore                
                 proportion_matrix[i,j] = ab / total
                 accum += (ab / total)
 

@@ -12,6 +12,7 @@ def format_metaphlan_output_2_species(meta_path) :
     idx = [bool(re.search('unclassified',x)) == False for x in df.index]
     meta_df = df.loc[idx,:]
     meta_df.index = [x.split('|')[-1] for x in meta_df.index]
+    meta_df = meta_df.fillna(0)
     return meta_df
 
 def main() :

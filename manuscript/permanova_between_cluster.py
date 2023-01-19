@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 from matplotlib import cm,colors
 from matplotlib.patches import Ellipse
 import matplotlib.transforms as transforms
-import seaborn as sns
+import seaborn as sns# type: ignore
 import os
 import argparse
 from itertools import combinations
-from skbio.stats.ordination import pcoa 
-from skbio.stats.distance import permanova,DistanceMatrix
+from skbio.stats.ordination import pcoa # type: ignore
+from skbio.stats.distance import permanova,DistanceMatrix# type: ignore
 
 def confidence_ellipse(x, y, ax, n_std=3.0, facecolor='none', **kwargs):
     """
@@ -37,21 +37,21 @@ def confidence_ellipse(x, y, ax, n_std=3.0, facecolor='none', **kwargs):
         raise ValueError("x and y must be the same size")
 
     cov = np.cov(x, y)
-    pearson = cov[0, 1]/np.sqrt(cov[0, 0] * cov[1, 1])
+    pearson = cov[0, 1]/np.sqrt(cov[0, 0] * cov[1, 1]) # type: ignore
     # Using a special case to obtain the eigenvalues of this
     # two-dimensionl dataset.
-    ell_radius_x = np.sqrt(1 + pearson)
-    ell_radius_y = np.sqrt(1 - pearson)
+    ell_radius_x = np.sqrt(1 + pearson)# type: ignore
+    ell_radius_y = np.sqrt(1 - pearson)# type: ignore
     ellipse = Ellipse((0, 0), width=ell_radius_x * 2, height=ell_radius_y * 2,
                       facecolor=facecolor, **kwargs)
     # Calculating the stdandard deviation of x from
     # the squareroot of the variance and multiplying
     # with the given number of standard deviations.
-    scale_x = np.sqrt(cov[0, 0]) * n_std
+    scale_x = np.sqrt(cov[0, 0]) * n_std# type: ignore
     mean_x = np.mean(x)
 
     # calculating the stdandard deviation of y ...
-    scale_y = np.sqrt(cov[1, 1]) * n_std
+    scale_y = np.sqrt(cov[1, 1]) * n_std# type: ignore
     mean_y = np.mean(y)
 
     transf = transforms.Affine2D() \
@@ -94,10 +94,10 @@ def mds_scatterplot(dmatrix,metadata,hue,title,output_path,style=None) :
     metadata : dataframe, row as sample ,columns as feature
     '''
     x = dmatrix.to_numpy()
-    mds = MDS(n_components=2,dissimilarity='precomputed')
+    mds = MDS(n_components=2,dissimilarity='precomputed')# type: ignore
     mds_r = mds.fit_transform(x)
     mds_df = pd.DataFrame(mds_r,index = dmatrix.index)
-    mds_df.columns = ['MDS1','MDS2']
+    mds_df.columns = ['MDS1','MDS2']# type: ignore
     mds_df = pd.concat([mds_df,metadata],axis=1)
 
     plt.figure(figsize=(8,6))
@@ -162,7 +162,7 @@ def pcoa_with_permanova_scatterplot(dmatrix,metadata,hue,condition,title,output_
 def main() :
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input",help="path of unifrac diatance matrix")
-    parser.add_argument("-c", "--cluster",help="label of sample cluster")
+    parser.add_argument("-c", "--cluster",help="path of consensus clustering label")
     parser.add_argument("-o","--output",help="output path of probiotics signature")
     parser.add_argument("-e","--hue",help='hue by which label')
     args = parser.parse_args()
@@ -170,7 +170,7 @@ def main() :
     cluster_color = dict()
     cmap = cm.get_cmap('Set2', 8) 
     n = 1
-    for i in range(cmap.N):    
+    for i in range(cmap.N):    # type: ignore
         if n < 6 :
             rgba = cmap(i)
             # rgb2hex accepts rgb or rgba
@@ -183,14 +183,14 @@ def main() :
     if os.path.isdir(args.output) == False :
         os.mkdir(args.output)
     ### import metadata 
-    lacto_cluster = pd.read_csv(args.cluster + 'lacto_sig_cluster.txt',sep = '\t',index_col = 0)
-    bifido_cluster = pd.read_csv(args.cluster + 'bifido_sig_cluster.txt',sep = '\t',index_col = 0)
+    lacto_cluster = pd.read_csv(args.cluster + 'lacto_clustering.txt',sep = '\t',index_col = 0)
+    bifido_cluster = pd.read_csv(args.cluster + 'bifido_clustering.txt',sep = '\t',index_col = 0)
     plot_metadata = pd.concat([lacto_cluster,bifido_cluster],axis=1)
-    plot_metadata.columns = ['Lactobacillus','Bifidobacterium']
+    plot_metadata.columns = ['Lactobacillus','Bifidobacterium']# type: ignore
     ### import unifrac distance
     matrix = pd.read_csv(args.input,sep = '\t',index_col=0)
-    matrix.columns = [x.split('_')[0] for x in matrix.index]
-    matrix.index = [x.split('_')[0] for x in matrix.index]
+    matrix.columns = [x.split('_')[0] for x in matrix.index]# type: ignore
+    matrix.index = [x.split('_')[0] for x in matrix.index]# type: ignore
     
     matrix = matrix.loc[plot_metadata.index,plot_metadata.index]
     # Load the pandas matrix into skbio format
