@@ -1,12 +1,11 @@
 # Probiotics signature
-
-![Untitled](Github%20repo%20readme%20f32432f57cf7401e822b5357555a072a/Untitled.png)
-
 ---
 
 ## Introduction
 
 Probiotics signature provide *specific probiotics combination* via non-negative matrix factorization (NMF) based on relative abundance matrix from population. [In previous probiotics intervention research](https://www.aging-us.com/article/102810/text), probiotics for intervention were designed by bacterial function rather than abundance of bacteria in participants. We can categorize people into multiple sub-class according to their probiotics signature profile to achieve precise supplementation of probiotics.
+
+![image](https://github.com/brucewu1996/Probiotics_signature/blob/beta/overview.png)
 
 ---
 
