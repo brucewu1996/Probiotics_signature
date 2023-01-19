@@ -139,7 +139,7 @@ def pcoa_with_permanova_scatterplot(dmatrix,metadata,hue,condition,title,output_
     pcoa_df = pd.concat([pcoa_df,metadata],axis=1)
     plt.figure(figsize=fig_size)
     ax = plt.gca()
-    sns.scatterplot(data=pcoa_df,x= 'PC1',y='PC2',hue=hue,palette=color)
+    sns.scatterplot(data=pcoa_df,x= 'PC1',y='PC2',hue=hue,hue_order = condition,palette=color)
     text_x = min(pcoa_df['PC1'])
     text_y = max(pcoa_df['PC2'])
     plt.text(text_x,text_y,text)
@@ -155,7 +155,7 @@ def pcoa_with_permanova_scatterplot(dmatrix,metadata,hue,condition,title,output_
     ylabel = "PCoA2 (" + str(pc2_exp) + "%)"
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.title(title)
+    plt.title(title,fontsize=30)
     plt.savefig(output_path,dpi = 300,bbox_inches = 'tight',format = format)
 
 
