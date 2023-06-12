@@ -18,7 +18,7 @@ def signature_proportion_heatmap(sig_matrix,label_df,order,legend_prefix,output,
     cmap = sns.light_palette("darksalmon", as_cmap=True)
     #cmap = sns.diverging_palette(240, 10, n=9,as_cmap=True)
     cluster1 = metadata_df[order[0]].values
-    cluster1_lut = dict(zip( set(cluster1),  [cm.Set2(x) for x in range(10)] ))
+    cluster1_lut = dict(zip( set(cluster1),  [cm.Set2(x) for x in range(10)] )) # type: ignore
     cluster1_colors = pd.Series(cluster1).map(cluster1_lut)
     cluster1_colors.index = metadata_df.index
     
@@ -29,16 +29,16 @@ def signature_proportion_heatmap(sig_matrix,label_df,order,legend_prefix,output,
                     col_cluster=False,
                     col_colors=[cluster1_colors[plot_df.columns]],
                     linewidths=0, figsize=(10, 6))
-        g.ax_cbar.set_position((0.05, .3, .03, .4))
-        g.cax.set_title("Signature proportion",fontsize = 10)
+        g.ax_cbar.set_position((0.05, .3, .03, .4))# type: ignore
+        g.cax.set_title("Signature proportion",fontsize = 10)# type: ignore
 
         for label in set(cluster1):
             g.ax_col_dendrogram.bar(0, 0, color=cluster1_lut[label], label=label, linewidth=0)
-        l1 = g.ax_col_dendrogram.legend(title=legend_prefix, loc="center", ncol=5, bbox_to_anchor=(0.47, .9), bbox_transform=gcf().transFigure)
+        l1 = g.ax_col_dendrogram.legend(title=legend_prefix, loc="center", ncol=5, bbox_to_anchor=(0.47, .9), bbox_transform=gcf().transFigure) # type: ignore
     else :
 
         cluster2 = metadata_df[order[1]].values
-        cluster2_lut = dict(zip( set(cluster2),  [cm.Set3(x) for x in range(10)] ))
+        cluster2_lut = dict(zip( set(cluster2),  [cm.Set3(x) for x in range(10)] ))# type: ignore
         cluster2_colors = pd.Series(cluster2).map(cluster2_lut)
         cluster2_colors.index = metadata_df.index
 
@@ -50,16 +50,16 @@ def signature_proportion_heatmap(sig_matrix,label_df,order,legend_prefix,output,
                         col_cluster=False,
                         col_colors=[cluster1_colors[plot_df.columns],cluster2_colors[plot_df.columns]],
                         linewidths=0, figsize=(10, 6))
-        g.ax_cbar.set_position((0.05, .3, .03, .4))
-        g.cax.set_title("Signature proportion",fontsize = 10)
+        g.ax_cbar.set_position((0.05, .3, .03, .4))# type: ignore
+        g.cax.set_title("Signature proportion",fontsize = 10)# type: ignore
 
         for label in set(cluster1):
             g.ax_col_dendrogram.bar(0, 0, color=cluster1_lut[label], label=label, linewidth=0)
-        l1 = g.ax_col_dendrogram.legend(title=order[0] + ' ' + legend_prefix, loc="center", ncol=5, bbox_to_anchor=(0.47, 1.0), bbox_transform=gcf().transFigure)
+        l1 = g.ax_col_dendrogram.legend(title=order[0] + ' ' + legend_prefix, loc="center", ncol=5, bbox_to_anchor=(0.47, 1.0), bbox_transform=gcf().transFigure) # type: ignore
 
         for label in set(cluster2):
             g.ax_row_dendrogram.bar(0, 0, color=cluster2_lut[label], label=label, linewidth=0)
-        l2 = g.ax_row_dendrogram.legend(title=order[1] + ' ' + legend_prefix, loc="center", ncol=5, bbox_to_anchor=(0.47, .9), bbox_transform=gcf().transFigure)
+        l2 = g.ax_row_dendrogram.legend(title=order[1] + ' ' + legend_prefix, loc="center", ncol=5, bbox_to_anchor=(0.47, .9), bbox_transform=gcf().transFigure) # type: ignore
 
     plt.savefig(output,dpi = 300,bbox_inches = 'tight',format = format)
     
@@ -94,7 +94,7 @@ def signature_coefficient_relative_importance_barplot(sig_coef_matrix,output_pat
    legend_order = np.unique(plot_df['variable'])
    bar_order = np.unique(plot_df['Subtype'])
    fig = px.bar(plot_df, x="value", y="variable", color="Subtype",width=1200, height=500,template='simple_white',
-               color_discrete_sequence=px.colors.qualitative.Set2,category_orders={"variable": legend_order},labels={'value' : xlabel})
+               color_discrete_sequence=px.colors.qualitative.Pastel,category_orders={"variable": legend_order},labels={'value' : xlabel})
    fig.update_layout(barmode='stack', xaxis={'categoryorder':'array','categoryarray':bar_order}, title_x=0.5,yaxis_title=None)
    pio.write_image(fig,output_path + output_prefix + '_' +'signature_composition_barplot'  + '.png',format = 'png',scale = 2)
    pio.write_image(fig,output_path + output_prefix + '_' +'signature_composition_barplot'  + '.svg',format = 'svg',scale = 2)
@@ -109,13 +109,13 @@ def sig_proportion_compoarison(sig_matrix,metadata,output_path,format='png') :
     sig_matrix_proportion.columns = ['Cluster','Signature','Proportion']  # type: ignore
 
     fig, axes = plt.subplots(2,4,figsize = (20,12))
-    for idx,ax in enumerate(axes.ravel()) :
+    for idx,ax in enumerate(axes.ravel()) : # type: ignore
         
         sig_idx = np.where(sig_matrix_proportion['Signature'] == sig_matrix.index[idx],True,False)
         df = sig_matrix_proportion.loc[sig_idx,:] 
         cluster = df['Cluster'].unique()
         box_pair = list(combinations(cluster,2))  # type: ignore
-        sns.boxplot(data=df, x='Cluster', y= 'Proportion',palette='Set2',ax = ax)
+        sns.boxplot(data=df, x='Cluster', y= 'Proportion',palette='rainbow_r',ax = ax)
         ax.set_title(sig_matrix.index[idx])
         ax.set_xlabel('Cluster')
         ax.set_ylabel('Signature proportion')

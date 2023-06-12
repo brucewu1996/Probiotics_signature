@@ -71,12 +71,12 @@ def pcoa_scatterplot(dmatrix,metadata,hue,title,output_path,fig_size = (8,6),sty
     pcoa_r = pcoa(x,number_of_dimensions=2)
     pcoa_df = pcoa_r.samples
     pcoa_df.index = dmatrix.index
-    pc1_exp,pc2_exp = round(100*pcoa_r.proportion_explained,2)
+    pc1_exp,pc2_exp = round(100*pcoa_r.proportion_explained,2)# type: ignore    
     pcoa_df = pd.concat([pcoa_df,metadata],axis=1)
 
     plt.figure(figsize=fig_size)
     if style != None :
-        sns.scatterplot(data=pcoa_df,x= 'PC1',y='PC2',hue=hue,style='Diagnosis',palette="Set2",s=100)
+        sns.scatterplot(data=pcoa_df,x= 'PC1',y='PC2',hue=hue,style=style,palette="rainbow_r",s=100)
     else :
         sns.scatterplot(data=pcoa_df,x= 'PC1',y='PC2',hue=hue,palette="Set2")
 
@@ -155,7 +155,7 @@ def pcoa_with_permanova_scatterplot(dmatrix,metadata,hue,condition,title,output_
     ylabel = "PCoA2 (" + str(pc2_exp) + "%)"
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.title(title,fontsize=30)
+    plt.title(title)
     plt.savefig(output_path,dpi = 300,bbox_inches = 'tight',format = format)
 
 
@@ -183,10 +183,10 @@ def main() :
     if os.path.isdir(args.output) == False :
         os.mkdir(args.output)
     ### import metadata 
-    lacto_cluster = pd.read_csv(args.cluster + 'lacto_clustering.txt',sep = '\t',index_col = 0)
-    bifido_cluster = pd.read_csv(args.cluster + 'bifido_clustering.txt',sep = '\t',index_col = 0)
-    plot_metadata = pd.concat([lacto_cluster,bifido_cluster],axis=1)
-    plot_metadata.columns = ['Lactobacillus','Bifidobacterium']# type: ignore
+    plot_metadata = pd.read_csv(args.cluster,sep = '\t',index_col = 0)
+    #bifido_cluster = pd.read_csv(args.cluster + 'bifido_clustering.txt',sep = '\t',index_col = 0)
+    #plot_metadata = pd.concat([lacto_cluster,bifido_cluster],axis=1)
+    #plot_metadata.columns = ['Lactobacillus','Bifidobacterium']# type: ignore
     ### import unifrac distance
     matrix = pd.read_csv(args.input,sep = '\t',index_col=0)
     matrix.columns = [x.split('_')[0] for x in matrix.index]# type: ignore
@@ -194,7 +194,7 @@ def main() :
     
     matrix = matrix.loc[plot_metadata.index,plot_metadata.index]
     # Load the pandas matrix into skbio format
-    dm = DistanceMatrix(matrix)
+    #dm = DistanceMatrix(matrix)
     # plot permanova
     hue = args.hue
     cb = list(combinations(np.unique(plot_metadata[args.hue].values),2))
@@ -205,15 +205,15 @@ def main() :
         condition = cb[i]
         color = [cluster_color[x] for x in condition]
         idx = np.where((plot_metadata[hue] == condition[0]) | (plot_metadata[hue] == condition[1]),True,False)
-        m = plot_matrix.loc[idx,idx]
+        m = plot_matrix.loc[idx,idx].fillna(0)
         label = plot_metadata.loc[idx,:]
         #title = "Permanova with weighted unifrac distance between " + prefix +" cluster"+ str(condition[0]) + ' and '+prefix + ' cluster' + str(condition[1])
         title = ''
         file = args.output + 'permanova_' + prefix + '_' + 'c' +str(condition[0]) + '_c' + str(condition[1]) + '.svg' 
         try :
             pcoa_with_permanova_scatterplot(m,label,hue=hue,condition=condition,color= color,title=title,output_path=file,format='svg')
-        except :
-            pass
+        except Exception as e :
+            print(e)
 
         
 if __name__ == '__main__' :

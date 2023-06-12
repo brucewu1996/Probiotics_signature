@@ -20,7 +20,7 @@ def finger_print_proportion(x,w,h):
                 proportion_matrix[i,j] = ab / total
                 accum += (ab / total)
 
-        proportion_matrix[i,-1] = 1 - accum
+        proportion_matrix[i,-1] = 1 - accum # residual
 
     return proportion_matrix
 
@@ -48,6 +48,7 @@ def main() :
     parser.add_argument("-i", "--input",help="path of input metaphlan table")
     parser.add_argument("-k", "--number",type=int,help="number of signature to be decomposed")
     parser.add_argument("-p","--prefix",type=str,help="prefix of output signature")
+    parser.add_argument("-n","--name",type=str,help="name of output signature matrix / coefficient")
     parser.add_argument("-o","--output",help="output path of probiotics signature")
     args = parser.parse_args()
     ab_matrix = pd.read_csv(args.input,sep = '\t',index_col = 0)
@@ -57,8 +58,8 @@ def main() :
         os.mkdir(args.output)
     
     sig_ab_matrix,sig_coef_matrix = fit_signature(ab_matrix,ab_matrix,args.number,args.prefix)
-    sig_ab_matrix.to_csv(args.output + args.prefix + "_" + "signature_proportion_matrix.txt",sep = '\t')
-    sig_coef_matrix.to_csv(args.output + args.prefix + "_" + "signature_coefficient_matrix.txt",sep = '\t')
+    sig_ab_matrix.to_csv(args.output + args.name + "_" + "signature_proportion_matrix.txt",sep = '\t')
+    sig_coef_matrix.to_csv(args.output + args.name + "_" + "signature_coefficient_matrix.txt",sep = '\t')
     
 if __name__ == '__main__' :
     main()

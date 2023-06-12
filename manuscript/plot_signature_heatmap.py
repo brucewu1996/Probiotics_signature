@@ -10,7 +10,7 @@ import argparse
 def signature_proportion_heatmap(sig_matrix,label_df,order,legend_prefix,output,format = 'png') :
     
     metadata_df = label_df.sort_values(by=order)
-    plot_df = sig_matrix.loc[:,metadata_df.index]
+    plot_df = sig_matrix.loc[:,metadata_df.index].T
     
     cmap = sns.light_palette("darksalmon", as_cmap=True)
     #cmap = sns.diverging_palette(240, 10, n=9,as_cmap=True)
@@ -24,17 +24,17 @@ def signature_proportion_heatmap(sig_matrix,label_df,order,legend_prefix,output,
         g = sns.clustermap(plot_df, cmap=cmap,vmin=0, vmax=1,  cbar_kws={"shrink": .3},
                     row_cluster=False, 
                     col_cluster=False,
-                    col_colors=[cluster1_colors[plot_df.columns]],
-                    linewidths=0, figsize=(10, 6))
-        g.ax_cbar.set_position((0.05, .3, .03, .4))
-        g.cax.set_title("Signature proportion",fontsize = 10)
+                    row_colors=[cluster1_colors[plot_df.index]],
+                    linewidths=0, figsize=(6,12))
+        g.ax_cbar.set_position((0.05, .3, .03, .4))# type: ignore
+        g.cax.set_title("Signature proportion",fontsize = 10)# type: ignore
 
-        for label in set(cluster1):
-            g.ax_col_dendrogram.bar(0, 0, color=cluster1_lut[label], label=label, linewidth=0)
-        l1 = g.ax_col_dendrogram.legend(title=legend_prefix, loc="center", ncol=5, bbox_to_anchor=(0.47, .9), bbox_transform=plt.gcf().transFigure)# type: ignore
+        for label in sorted(set(cluster1)):
+            g.ax_col_dendrogram.bar(0, 0, color=cluster1_lut[label], label=label, linewidth=0.5)
+        l1 = g.ax_col_dendrogram.legend(title=legend_prefix, loc="center", ncol=5, bbox_to_anchor=(0.47, .9), bbox_transform=plt.gcf().transFigure) # type: ignore
     else :
 
-        cluster2 = metadata_df[order[1]].values
+        cluster2 = metadata_df.loc[:,order[1]].values
         cluster2_lut = dict(zip( set(cluster2),  [cm.Set3(x) for x in range(10)] ))# type: ignore
         cluster2_colors = pd.Series(cluster2).map(cluster2_lut)
         cluster2_colors.index = metadata_df.index
@@ -45,18 +45,19 @@ def signature_proportion_heatmap(sig_matrix,label_df,order,legend_prefix,output,
         g = sns.clustermap(plot_df, cmap=cmap,vmin=0, vmax=1,  cbar_kws={"shrink": .3},
                         row_cluster=False, 
                         col_cluster=False,
-                        col_colors=[cluster1_colors[plot_df.columns],cluster2_colors[plot_df.columns]],
-                        linewidths=0, figsize=(10, 6))
-        g.ax_cbar.set_position((0.05, .3, .03, .4))
-        g.cax.set_title("Signature proportion",fontsize = 10)
+                        row_colors=[cluster1_colors[plot_df.index],cluster2_colors[plot_df.index]],
+                        linewidths=0, figsize=(6,10))
+        g.ax_cbar.set_position((0.05, .3, .03, .4))# type: ignore
+        g.cax.set_title("Signature proportion",fontsize = 10)# type: ignore
 
-        for label in set(cluster1):
+        
+        for label in sorted(set(cluster1)):
             g.ax_col_dendrogram.bar(0, 0, color=cluster1_lut[label], label=label, linewidth=0)
-        l1 = g.ax_col_dendrogram.legend(title=order[0] + ' ' + legend_prefix, loc="center", ncol=5, bbox_to_anchor=(0.47, 1.0), bbox_transform=plt.gcf().transFigure)# type: ignore
-
-        for label in set(cluster2):
+        l1 = g.ax_col_dendrogram.legend(title=order[0] + ' ' + legend_prefix, loc="center", ncol=5, bbox_to_anchor=(0.47, 1.0), bbox_transform=plt.gcf().transFigure) # type: ignore
+    
+        for label in sorted(set(cluster2)):
             g.ax_row_dendrogram.bar(0, 0, color=cluster2_lut[label], label=label, linewidth=0)
-        l2 = g.ax_row_dendrogram.legend(title=order[1] + ' ' + legend_prefix, loc="center", ncol=5, bbox_to_anchor=(0.47, .9), bbox_transform=plt.gcf().transFigure)# type: ignore
+        l2 = g.ax_row_dendrogram.legend(title=order[1] + ' ' + legend_prefix, loc="center", ncol=5, bbox_to_anchor=(0.47, .9), bbox_transform=plt.gcf().transFigure) # type: ignore
 
     plt.savefig(output,dpi = 300,bbox_inches = 'tight',format = format)
 
@@ -83,7 +84,7 @@ def main() :
     metadata = pd.concat([lacto_cluster,bifido_cluster],axis=1)
     metadata.columns = ['Lactobacillus','Bifidobacterium']  # type: ignore
     
-    signature_proportion_heatmap(sig_matrix,metadata,['Lactobacillus'],"consensus cluster",args.output + 'sig_proportion_heatmap_ordr_by_lacto.png')
+    signature_proportion_heatmap(sig_matrix.T,metadata,['Lactobacillus'],"consensus cluster",args.output + 'sig_proportion_heatmap_ordr_by_lacto.png')
         
 if __name__ == '__main__' :
     main()

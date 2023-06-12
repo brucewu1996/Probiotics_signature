@@ -26,7 +26,7 @@ def metaphlan_subtype(meta_df,subtype_df,genus,species_col,group_col) :
         if df.index[i] in subtype_dict.keys() :
             s = df.index[i]
             subtype = subtype_dict[s]
-        elif df.index[i] == 's__Lactobacillus_casei_paracasei' :
+        elif df.index[i] == 's__Lactobacillus_casei_group' :
             s = df.index[i]
             subtype = 'Lacticaseibacillus_subtype'
         else :
@@ -51,17 +51,17 @@ def main() :
     
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input",help="path of subtype matrix")
-    parser.add_argument("-r","reference",help="path of subtype reference. ex: s__Lactobacillus_plantarum : Lactiplantibacillus_subtype")
-    parser.add_argument("-f","format",help="species name is metaphlan format or not! metaphlan format : s__Lactobacillus_plantarum")
+    parser.add_argument("-r","--reference",help="path of subtype reference. ex: s__Lactobacillus_plantarum : Lactiplantibacillus_subtype")
+    parser.add_argument("-f","--format",help="species name is metaphlan format or not! metaphlan format : s__Lactobacillus_plantarum")
     parser.add_argument("-o","--output",help="output path of subtype matrix")
     args = parser.parse_args()
     
     matrix = pd.read_csv(args.input,sep='\t',index_col=0)
-    subtype = pd.read_csv(args.reference,sep='\t',index_col=0)
+    subtype = pd.read_csv(args.reference)
     if args.format != "True" :
         matrix.index = ['s__' + x.replace(' ','_') for x in matrix.index]# type: ignore   
         
-    subtype_matrix,subtype_dict = metaphlan_subtype(matrix,subtype,'Lactobacillus','species','phylogroup')
+    subtype_matrix,_ = metaphlan_subtype(matrix,subtype,'Lactobacillus','species','phylogroup')
     subtype_matrix.to_csv(args.output,sep='\t')
  
 if __name__ == '__main__' :
