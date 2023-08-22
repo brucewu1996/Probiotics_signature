@@ -52,13 +52,13 @@ def main() :
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input",help="path of subtype matrix")
     parser.add_argument("-r","--reference",help="path of subtype reference. ex: s__Lactobacillus_plantarum : Lactiplantibacillus_subtype")
-    parser.add_argument("-f","--format",help="species name is metaphlan format or not! metaphlan format : s__Lactobacillus_plantarum")
+    parser.add_argument("-f","--format",type=bool,default=True,help="species name is metaphlan format or not! metaphlan format : s__Lactobacillus_plantarum")
     parser.add_argument("-o","--output",help="output path of subtype matrix")
     args = parser.parse_args()
     
     matrix = pd.read_csv(args.input,sep='\t',index_col=0)
     subtype = pd.read_csv(args.reference)
-    if args.format != "True" :
+    if args.format == False :
         matrix.index = ['s__' + x.replace(' ','_') for x in matrix.index]# type: ignore   
         
     subtype_matrix,_ = metaphlan_subtype(matrix,subtype,'Lactobacillus','species','phylogroup')

@@ -30,7 +30,7 @@ def signature_coefficient_relative_importance_barplot(sig_coef_matrix,output_pat
    fig.update_layout(barmode='stack', xaxis={'categoryorder':'array','categoryarray':bar_order}, title_x=0.5,yaxis_title=None)
    pio.write_image(fig,output_path + output_prefix + '_' +'signature_composition_barplot'  + '.png',format = 'png',scale = 2)
    pio.write_image(fig,output_path + output_prefix + '_' +'signature_composition_barplot'  + '.svg',format = 'svg',scale = 2)
-   fig.show() 
+   #fig.show() 
    
 def main() :
     parser = argparse.ArgumentParser()
