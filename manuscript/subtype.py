@@ -18,6 +18,8 @@ def metaphlan_subtype(meta_df,subtype_df,genus,species_col,group_col) :
 
     idx = [bool(re.search(genus,x)) for x in meta_df.index]
     df = meta_df.loc[idx,:]
+    # remove l.rogosae from lactobacillus matrix
+    df.drop('s__Lactobacillus_rogosae',axis=0,inplace=True)
 
     idx = list()
     ## change species name to subtype name

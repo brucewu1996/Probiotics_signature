@@ -10,7 +10,7 @@ import os
 import argparse
 
 
-def signature_coefficient_relative_importance_barplot(sig_coef_matrix,output_path,output_prefix,xlabel = 'Relative importantance'):
+def signature_coefficient_relative_importance_stacked_barplot(sig_coef_matrix,output_path,output_prefix,xlabel = 'Relative importantance'):
    sig_coef_matrix = sig_coef_matrix.T
    sig_coef_matrix.columns = [x.capitalize() for x in sig_coef_matrix.columns]
    plot_df = pd.DataFrame()
@@ -31,6 +31,42 @@ def signature_coefficient_relative_importance_barplot(sig_coef_matrix,output_pat
    pio.write_image(fig,output_path + output_prefix + '_' +'signature_composition_barplot'  + '.png',format = 'png',scale = 2)
    pio.write_image(fig,output_path + output_prefix + '_' +'signature_composition_barplot'  + '.svg',format = 'svg',scale = 2)
    #fig.show() 
+
+def signature_coefficient_relative_importance_barplot(sig_matrix,output_path,xlabel = 'Species',xticks = None,format = 'png',cmap = 'Set3',fig_size = (7,3)) :
+    '''
+    sig_matrix : dataframe; x is signature , y is element in signature
+    output_path : str ; output folder of fig output
+    '''
+    # convert sig matrix coef into relative importance
+    plot_df = sig_matrix.T.copy()
+    for c in plot_df.columns :
+        relative_coef = plot_df[c].transform(lambda x: 100 * x/x.sum()).values
+        log_relative_coef = list(map(lambda x : log10(x+1),relative_coef))
+        plot_df[c] = log_relative_coef
+    # plot setting
+    n_element = plot_df.shape[0]
+    plot_df['Species'] = list(plot_df.index)
+    # plot loliplot
+    for c in plot_df.columns[:-1] :
+        plt.figure(figsize=fig_size)
+        sns.barplot(data=plot_df,y=c,x='Species',palette=cmap)
+        plt.title(c.capitalize())
+        if c != plot_df.columns[-2] :
+            plt.xticks([])
+            plt.xlabel('')
+            plt.ylabel('')
+        else :
+            if not xticks :
+                xticks = list(plot_df.index)
+                #xlabel = [x.split('_')[0][0] + '.' + x.split('_')[1] for x in plot_df.index]
+            x = np.arange(n_element)
+            plt.xticks(x,xticks,rotation=60)
+            plt.xlabel(xlabel)
+            plt.ylabel('')
+            #plt.ylabel("Relative importance")
+        plt.savefig("%s%s_sig_relative_importance_barplot.%s" % (output_path,c.replace(' ','_'),format),dpi=300,format = 'svg')
+        plt.show()
+
    
 def main() :
     parser = argparse.ArgumentParser()
@@ -43,11 +79,18 @@ def main() :
     if os.path.isdir(args.output) == False :
         os.mkdir(args.output)
     #### sig coefficient pie chart
-    lacto_coef = pd.read_csv(args.input + args.lacto_prefix +'_signature_coefficient_matrix.txt',sep = '\t',index_col = 0)
-    bifido_coef = pd.read_csv(args.input + args.bifido_prefix +'_signature_coefficient_matrix.txt',sep = '\t',index_col = 0)
-    
-    signature_coefficient_relative_importance_barplot(lacto_coef,args.output,args.lacto_prefix)
-    signature_coefficient_relative_importance_barplot(bifido_coef,args.output,args.bifido_prefix)
+    lacto_sig_coef = pd.read_csv(args.input + args.lacto_prefix +'_signature_coefficient_matrix.txt',sep = '\t',index_col = 0)
+    bifido_sig_coef = pd.read_csv(args.input + args.bifido_prefix +'_signature_coefficient_matrix.txt',sep = '\t',index_col = 0)
+
+    bifido_sig_coef.columns = [x[3:] for x in bifido_sig_coef.columns]
+    bifido_order = ["Bifidobacterium_pseudocatenulatum","Bifidobacterium_longum","Bifidobacterium_adolescentis","Bifidobacterium_bifidum",
+                    "Bifidobacterium_dentium","Bifidobacterium_breve","Bifidobacterium_animalis","Bifidobacterium_moukalabense","Bifidobacterium_anseris"]
+    bifido_sig_coef = bifido_sig_coef.loc[:,bifido_order]
+    bifido_x_label = [x.split('_')[0][0] + '.' + x.split('_')[1] for x in bifido_sig_coef.columns]
+    lacto_x_label = [x.split('_')[0] for x in lacto_sig_coef.columns]
+
+    signature_coefficient_relative_importance_barplot(bifido_sig_coef,args.output,xticks=bifido_x_label,format='svg',fig_size=(7,3),cmap='Pastel1')
+    signature_coefficient_relative_importance_barplot(lacto_sig_coef,args.output,xticks=lacto_x_label,format='svg',fig_size=(7,3),xlabel='Subtype',cmap='Set3')
         
 if __name__ == '__main__' :
     main()
