@@ -79,8 +79,11 @@ def main() :
     sig_matrix = pd.concat([lacto_matrix,bifido_matrix],axis=0)
     sig_matrix.index = [x.capitalize() for x in sig_matrix.index]  # type: ignore
     ## 
-    lacto_cluster = pd.read_csv(args.cluster + 'lacto_clustering.txt',sep = '\t',index_col = 0)
-    bifido_cluster = pd.read_csv(args.cluster + 'bifido_clustering.txt',sep = '\t',index_col = 0)
+    lacto_cluster = pd.read_csv(args.cluster + 'consensus_clustering_label_4cluster.txt',sep = '\t',index_col = 0)
+    lacto_cluster.columns = ['Lacto']
+    bifido_cluster = pd.read_csv(args.cluster + 'consensus_clustering_label_4cluster.txt',sep = '\t',index_col = 0)
+    #bifido_cluster = pd.read_csv(args.cluster + 'bifido_clustering.txt',sep = '\t',index_col = 0)
+
     metadata = pd.concat([lacto_cluster,bifido_cluster],axis=1)
     metadata.columns = ['Lactobacillus','Bifidobacterium']  # type: ignore
     
