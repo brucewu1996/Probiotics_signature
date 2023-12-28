@@ -8,7 +8,7 @@ ranks <- 2:7
 bifido_mat <- as.matrix(bifido_df)
 i0 <- which(colSums(bifido_mat) == 0)
 i_na <- which(colSums(is.na(bifido_mat)) > 0)
-nmf_input = bifido_mat[, -c(col_0, col_na)] + 10 ** -8
+nmf_input = bifido_mat[, -c(i0, i_na)] + 10 ** -8
 bifido_estim.coad <- nmf(nmf_input,ranks,nrun = 5,.opt='v')
 bifido_p = plot(bifido_estim.coad) + ggtitle('Clustering evaluation of Bifidobacterium')
 ggsave('/home/bruce1996/repo/Microbiome_health_indicator/tutorial/nmf_evaluation/bifido_nmf_evaluation.png',dpi =300,width = 6,height = 4)
