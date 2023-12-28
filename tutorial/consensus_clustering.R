@@ -1,6 +1,6 @@
 library(ConsensusClusterPlus)
 
-consensus_matrix <- function(consensus_res,consensus_number){
+get_consensus_matrix <- function(consensus_res,consensus_number){
   m = consensus_res[[consensus_number]]$consensusMatrix
   samples = names(res[[4]]$consensusClass)
   df = as.data.frame(m)
@@ -24,7 +24,7 @@ probiotic_consensus <- function(exp_m,n_target,consensus_path,output_path,max_k 
 
 consensus_p = "/home/bruce1996/repo/Microbiome_health_indicator/tutorial/consensus_evaluation"
 output_p = "/home/bruce1996/repo/Microbiome_health_indicator/tutorial/consensus_clustering/consensus_label.txt"
-
+matrix_output_p = "/home/bruce1996/repo/Microbiome_health_indicator/tutorial/consensus_clustering/consensus_matrix.txt"
 exp_m = read.table("/home/bruce1996/repo/Microbiome_health_indicator/tutorial/sig_matrix/sig_proprotion_matrix.txt",
                    header = T,row.names = 1,sep = '\t',encoding = "UTF-8")
 exp_m = as.matrix(exp_m)
@@ -36,8 +36,13 @@ res = ConsensusClusterPlus(exp_m,maxK=10,reps=50,pItem=0.8,pFeature=1,
 n_cluster = 4
 df = as.data.frame(res[[n_cluster]]$consensusClass)
 colnames(df) = c('cluster')
-cm = consensus_matrix(res,n_cluster)
-write.table(cm,file =output_p,sep = '\t',quote = F)
+cm = get_consensus_matrix(res,n_cluster)
+consensus_label = as.data.frame(res[[n_cluster]]$consensusClass)
+colnames(consensus_label) = c('cluster')
+write.table(consensus_label,file=output_p,sep = '\t',quote=F)
+##output the consensus matrix
+cm = get_consensus_matrix(res,n_cluster)
+write.table(cm,file =matrix_output_p,sep = '\t',quote = F)
 
 
 
