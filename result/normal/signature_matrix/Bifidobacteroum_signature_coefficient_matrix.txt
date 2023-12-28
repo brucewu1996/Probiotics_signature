@@ -1,0 +1,4 @@
+	s__Bifidobacterium_adolescentis	s__Bifidobacterium_animalis	s__Bifidobacterium_anseris	s__Bifidobacterium_bifidum	s__Bifidobacterium_breve	s__Bifidobacterium_dentium	s__Bifidobacterium_longum	s__Bifidobacterium_moukalabense	s__Bifidobacterium_pseudocatenulatum
+Bifidobacterium signature1	2.8314522016813384	0.0005057760445592694	1.2418865389887932e-05	0.0940288935833934	0.0010278449480305004	0.004568546744016251	0.0	0.0	0.0018703856137039074
+Bifidobacterium signature2	0.0	0.0	0.0	0.0	0.017773924638243472	0.0	0.05192035041863785	0.0	14.599610000075502
+Bifidobacterium signature3	0.0	0.0010491149821228961	8.065198618764529e-06	0.30872567382318256	0.002811701556639886	0.030466362868780898	3.623289529823999	0.0	5.939408075881569e-05

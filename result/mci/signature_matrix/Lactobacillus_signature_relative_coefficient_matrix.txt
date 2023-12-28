@@ -1,0 +1,9 @@
+Lactobacillus signature1	Lactobacillus signature2	Lactobacillus signature3	Species
+0.0	0.0	0.0	Companilactobacillus_subtype
+0.0	0.0	0.004468543136735563	Fructilactobacillus_subtype
+0.024840305117302324	0.2563711264202828	0.0	Lacticaseibacillus_subtype
+0.0	0.0	0.00027900605142969497	Lactiplantibacillus_subtype
+0.0	0.21127587866401296	2.004254729372705	Lactobacillus_subtype
+0.0	0.0	0.0	Latilactobacillus_subtype
+1.9974669189266538	0.0	0.00022991969888539094	Ligilactobacillus_subtype
+0.4018658646175759	1.9981235310267924	0.0017264455448613603	Limosilactobacillus_subtype

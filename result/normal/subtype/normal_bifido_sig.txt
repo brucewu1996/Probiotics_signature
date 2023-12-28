@@ -1,0 +1,10 @@
+Species	Signature
+Bifidobacterium adolescentis	BS1
+Bifidobacterium bifidum	BS1,BS3
+Bifidobacterium dentium	BS1,BS3
+Bifidobacterium pseudocatenulatum	BS2
+Bifidobacterium longum	BS2,BS3
+Bifidobacterium animalis	None
+Bifidobacterium anseris	None
+Bifidobacterium breve	None
+Bifidobacterium moukalabense	None
